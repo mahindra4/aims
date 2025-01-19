@@ -1,12 +1,16 @@
+// require('dotenv').config()
 document.getElementById("sendButton").addEventListener("click",()=>{
     const email = document.getElementById("email").value
     sendButton.disabled = true
-    fetch("http://localhost:3000/send",{
-        method: "POST",
+    // console.log(process.env.port);
+    fetch(`http://localhost:12345/send`,{
+        method: 'POST',
         headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
+            'Content-type': 'application/json'
         },
-        body: `email=${email}`
+        body: JSON.stringify({
+            email: `${email}`
+        })
     })
     .then(response => {
         console.log(response);
@@ -29,12 +33,16 @@ document.getElementById("submitButton").addEventListener("click",()=>{
     const email = document.getElementById("email").value;
     const otp = document.getElementById("otp").value;
     const role = document.getElementById("role").value;
-    fetch("http://localhost:3000/submit",{
-        method: "POST",
+    fetch(`http://localhost:12345/submit`,{
+        method: 'POST',
         headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
+            'Content-type': 'application/json'
         },
-        body: `email=${email}&otp=${otp}&role=${role}`
+        body: JSON.stringify({
+            email: `${email}`,
+            otp: `${otp}`,
+            role: `${role}`            
+        })
     })
     .then(response => {
         console.log(response);
@@ -57,7 +65,7 @@ document.getElementById("submitButton").addEventListener("click",()=>{
         else if(data == '4'){
             window.location = "main.html";
         }
-        else if(data == '3'){
+        else if(data == '3' || data == '5'){
             alert("a stdent can't become instructor or faculty advisor or vice verse");
         }
         // alert("form has been successfully send!");

@@ -2,6 +2,9 @@ import random
 import smtplib
 import os
 import sys
+import time
+
+random.seed(time.time())
 
 from email.message import EmailMessage
 otp = ""
@@ -22,3 +25,4 @@ msg['to'] = to_mail
 msg.set_content("Your OTP is: "+otp)
 
 server.send_message(msg)
+server.quit()

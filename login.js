@@ -1,11 +1,9 @@
+require('dotenv').config()
 const express = require('express')
 const {Client} = require('pg')
 const {spawn} = require('child_process')
 const cors = require('cors')
 
-PORT = 3000;
-
-const app = express()
 const client = new Client({
     host: "localhost",
     user: "login",
@@ -15,8 +13,10 @@ const client = new Client({
 })
 client.connect();
 
+const app = express()
 app.use(cors());
-app.use(express.urlencoded({extended: true}));
+// app.use(express.urlencoded({extended: true}));
+app.use(express.json())
 // app.use(express.static('public'))
 
 
@@ -45,9 +45,10 @@ async function handle_otp(email){
 let otp_store = {}; // {email: otp}
 app.post("/send",async (req,res)=>{
     try{
+        console.log(req.body)
         let email = req.body.email
         let otp = "000000"
-        // otp = await handle_otp(email) // if resolve then gives the output here else there is an error
+        otp = await handle_otp(email) // if resolve then gives the output here else there is an error
         console.log('Received otp is '+otp)
         otp_store[email] = otp; // store it in the otp store and use it when submit is called
         res.send('OTP send')
@@ -68,8 +69,7 @@ app.post("/submit",async (req,res)=>{
         if((otp == otp_store[email]) || (otp == "000000")){
             // if it matches with the otp or default otp 000000 then given access 
             console.log('ACCESS PERMITTED');
-            delete otp_store[email] // when access is given to you then delete your email instance
-           
+            let access_permitted = false;
             // store it in the database
 
             // CONSTRAINTS 
@@ -85,37 +85,43 @@ app.post("/submit",async (req,res)=>{
                 // insert only when emails is not present in the database
                 await client.query('insert into login(email,role) values($1,$2)',[email,role]) // insert into database
                 console.log('new user')
-                res.send('0')
+                access_permitted = true;
+                res.send('0')           
             }
-            else{
+            else if(select_res.rowCount == 1){
                 const a = dict[select_res.rows[0].role] // database role
                 const b = dict[role] // user current role
                 if(a == b){
                     res.send('2'); // user should login with his database credentials
                     console.log('same role')
+                    access_permitted = true;
                 }
                 else if(a*b){
                     await client.query('insert into login values($1,$2)',[email,role]) 
                     console.log('instructor <-> faculty advisor')
                     res.send('4');  // instructor <-> faculty advisor
+                    access_permitted = true;
                 }
                 else{
                     console.log('student error')
                     res.send('3');
                 }
             }
+            else{
+                if(dict[role] == 0){
+                    // only instructor and faculty advisor can be the same person
+                    res.send('5');
+                }
+                else{
+                    // login with their credintials
+                    res.send('0');
+                    access_permitted = true;
+                }
+            }
 
-
-            // else if(select_res.rows[0].role == role){
-            //     res.send('0') // 0 says that login credentials are correct    
-            // }
-            // else if(role == 'student'){
-            //     res.send('3') // a stdent can't become instructor or faculty advisor
-            // }
-            // else{
-            //     await client.query('insert into login values($1,$2)',[email,role]) 
-            //     res.send('4') // instructor <-> faculty advisor
-            // }
+            if(access_permitted){
+                delete otp_store[email] // when access is given to you then delete your email instance
+            }
             const select = await client.query('select * from login');
             console.log(select.rows);
         }
@@ -130,8 +136,10 @@ app.post("/submit",async (req,res)=>{
 })
 
 
-app.listen(PORT)
+app.listen(process.env.PORT,()=>{
+    console.log('Server running...')
+})
 
-// app is listening of 3000 port (http://localhost:3000)
-// when a post request is made to the server at (http://localhost:3000) then first express.urlencoded() is invoked to parse the data (url combined data)
+// app is listening of 12345 port (http://localhost:<port>)
+// when a post request is made to the server at (http://localhost:<port>) then first express.urlencoded() is invoked to parse the data (url combined data)
 // and it's passed to the post to handle the request at "/" and req.body contains the information and res can send the data back to the webpage

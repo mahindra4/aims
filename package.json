@@ -9,10 +9,14 @@
   "version": "1.0.0",
   "main": "login.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "login": "nodemon --watch login.js login.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "dotenv": "^16.4.7",
+    "nodeman": "^1.1.2"
+  }
 }
