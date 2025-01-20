@@ -148,16 +148,31 @@ app.post("/student_selected_courses/course",(req,res)=>{
     selected_rows.forEach(async row => {
         const select_res = await client.query(`select * from student_selected_courses where student_email=$1 and instructor=$2 and course=$3`,[email,row.instructor,row.course]);
         if(select_res.rowCount == 0){
-            await client.query(`insert into student_selected_courses values($1,$2,$3)`,[email,row.instructor,row.course])
+            await client.query(`insert into student_selected_courses values($1,$2,$3,'pia')`,[email,row.instructor,row.course])
         }
     })
     res.send('insert into database')
 })
 
 app.post("/student_selected_courses/enrollments",async (req,res)=>{
-    email = req.body.email;
+    const email = req.body.email;
     const select_res = await client.query(`select instructor,course,status from student_selected_courses where student_email=$1`,[email]);
     res.send(select_res.rows)
+})
+
+app.post("/student_requests",async (req,res)=>{
+    const email = req.body.email
+    const select_res = await client.query(`select student_email,course from student_selected_courses where instructor=$1 and status='pia'`,[email])
+    res.send(select_res.rows);
+})
+
+app.post("/student_requests/instructor_approved",(req,res)=>{
+    const email = req.body.email;
+    const selected_rows = req.body.selected_rows;
+    selected_rows.forEach(async row=>{
+        await client.query(`update student_selected_courses set status='pfa' where student_email=$1 and instructor=$2 and course=$3`,[row.email,email,row.course]);
+    })
+    res.send('updated the database')
 })
 
 server = app.listen(process.env.PORT,()=>{

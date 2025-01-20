@@ -1,5 +1,5 @@
 // require('dotenv').config()
-PORT = 65535
+const PORT = 65535
 document.getElementById("sendButton").addEventListener("click",()=>{
     const email = document.getElementById("email").value
     sendButton.disabled = true

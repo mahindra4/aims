@@ -41,7 +41,7 @@
     <br>
     <button id="enroll">Enroll</button>
     <script>
-        PORT = 65535
+        const PORT = 65535
         email = sessionStorage.getItem('email')
         document.getElementById("email").innerHTML = 'user: '+email;
         // const selected_rows = []; // contains all the selected rows 
@@ -67,22 +67,6 @@
             rows.forEach(table_row => {
                 table_row.addEventListener('click',(event)=>{
                     table_row.classList.toggle('clicked');
-                    // const cells = table_row.querySelectorAll('td');
-                    // const instructor = cells[0].textContent;
-                    // const course = cells[1].textContent;
-                    // const index = selected_rows.findIndex(item => {
-                    //     return item.instructor == instructor && item.course == course
-                    // })
-                    // if(index == -1){
-                    //     // if this cell is not there
-                    //     selected_rows.push({
-                    //         instructor: instructor,
-                    //         course: course
-                    //     })
-                    // }
-                    // else{
-                    //     selected_rows.splice(index,1);
-                    // }
                 })  
             })
         }
