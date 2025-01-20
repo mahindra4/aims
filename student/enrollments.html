@@ -14,11 +14,13 @@
             enrollements
         </a>
     </div>
+    <h4 id="email"></h4>
     <table>
         <thead>
             <tr bgcolor="gray">
                 <th>instructor</th>
                 <th>course</th>
+                <th>status</th>
             </tr>
         </thead>
         <tbody id="student-selected-courses">
@@ -28,6 +30,7 @@
     <script>
         PORT = 65535
         const email = sessionStorage.getItem('email');
+        document.getElementById("email").innerHTML = 'user: '+email;
         async function syncronize(){
             try{
                 const response = await fetch(`http://localhost:${PORT}/student_selected_courses/enrollments`,{
@@ -46,6 +49,7 @@
                         <tr bgcolor="lightgray">
                             <td>${item.instructor}</td>
                             <td>${item.course}</td>
+                            <td>${item.status}</td>
                         </tr>
                     `
                     tbody.innerHTML+=element;

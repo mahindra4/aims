@@ -55,7 +55,7 @@ document.getElementById("submitButton").addEventListener("click",()=>{
         
         if(data == '0'){
             //student role
-            window.location = "course.html"
+            window.location = "./student/course.html"
         }
         else if(data == '1'){
             // instructor role

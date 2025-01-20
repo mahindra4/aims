@@ -19,12 +19,15 @@
     </style>
 </head>
 <body>
-    <a href="course.html" id="course-id">
-        courses
-    </a>
-    <a href="enrollments.html">
-        enrollements
-    </a>
+    <div>
+        <a href="course.html">
+            courses
+        </a>
+        <a href="enrollments.html">
+            enrollements
+        </a>
+    </div>
+    <h4 id="email"></h4>
     <table>
         <thead>
             <tr bgcolor="gray">
@@ -40,6 +43,7 @@
     <script>
         PORT = 65535
         email = sessionStorage.getItem('email')
+        document.getElementById("email").innerHTML = 'user: '+email;
         // const selected_rows = []; // contains all the selected rows 
         async function syncronize(){
             try{

@@ -156,7 +156,7 @@ app.post("/student_selected_courses/course",(req,res)=>{
 
 app.post("/student_selected_courses/enrollments",async (req,res)=>{
     email = req.body.email;
-    const select_res = await client.query(`select instructor,course from student_selected_courses where student_email=$1`,[email]);
+    const select_res = await client.query(`select instructor,course,status from student_selected_courses where student_email=$1`,[email]);
     res.send(select_res.rows)
 })
 
