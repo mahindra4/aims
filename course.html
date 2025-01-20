@@ -22,7 +22,7 @@
     <a href="course.html" id="course-id">
         courses
     </a>
-    <a href="enrollements.html">
+    <a href="enrollments.html">
         enrollements
     </a>
     <table>
@@ -38,10 +38,12 @@
     <br>
     <button id="enroll">Enroll</button>
     <script>
-        const selected_rows = [];
+        PORT = 65535
+        email = sessionStorage.getItem('email')
+        // const selected_rows = []; // contains all the selected rows 
         async function syncronize(){
             try{
-                const response = await fetch('http://localhost:8888/course_data');
+                const response = await fetch(`http://localhost:${PORT}/course_data`);
                 const data = await response.json();
                 tbody = document.getElementById("instructor-course-table")
                 data.forEach(item => {
@@ -53,38 +55,66 @@
                     `
                     tbody.innerHTML+=element;
                 })
-                console.log('Hello')
             }
             catch(err){
                 console.log('Error: '+err);
             }
-            const rows = document.querySelectorAll('tbody tr');
+            const rows = document.querySelectorAll('#instructor-course-table tr');
             rows.forEach(table_row => {
                 table_row.addEventListener('click',(event)=>{
                     table_row.classList.toggle('clicked');
-                    const cells = table_row.querySelectorAll('td');
-                    const instructor = cells[0].textContent;
-                    const course = cells[1].textContent;
-                    const index = selected_rows.findIndex(item => {
-                        return item.instructor == instructor && item.course == course
-                    })
-                    console.log('index: '+index)
-                    if(index == -1){
-                        // if this cell is not there
-                        selected_rows.push({
-                            instructor: instructor,
-                            course: course
-                        })
-                    }
-                    else{
-                        selected_rows.splice(index,1);
-                    }
+                    // const cells = table_row.querySelectorAll('td');
+                    // const instructor = cells[0].textContent;
+                    // const course = cells[1].textContent;
+                    // const index = selected_rows.findIndex(item => {
+                    //     return item.instructor == instructor && item.course == course
+                    // })
+                    // if(index == -1){
+                    //     // if this cell is not there
+                    //     selected_rows.push({
+                    //         instructor: instructor,
+                    //         course: course
+                    //     })
+                    // }
+                    // else{
+                    //     selected_rows.splice(index,1);
+                    // }
                 })  
             })
         }
         syncronize();
 
-        
+        document.getElementById("enroll").addEventListener('click',async (event)=>{
+            table_rows = document.querySelectorAll('#instructor-course-table tr');
+            selected_rows = [];
+            table_rows.forEach(table_row=>{
+                items = table_row.querySelectorAll('td');
+                instructor = items[0].textContent;
+                course = items[1].textContent;
+                if(table_row.classList.contains('clicked')){
+                    selected_rows.push({
+                        instructor: instructor,
+                        course: course
+                    })
+                    table_row.classList.toggle('clicked')
+                }
+            })
+            // selected_rows.forEach(item => console.log(item));
+
+            // ask server to store the selected courses in the database -> student_selected_courses
+            const response = await fetch(`http://localhost:${PORT}/student_selected_courses/course`,{
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: email,
+                    selected_rows: selected_rows
+                })
+            }) 
+            const data = await response.text()
+            console.log(data)
+        })
     </script>
 </body>
 </html>

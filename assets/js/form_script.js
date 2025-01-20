@@ -1,9 +1,9 @@
 // require('dotenv').config()
-PORT = 8888
+PORT = 65535
 document.getElementById("sendButton").addEventListener("click",()=>{
     const email = document.getElementById("email").value
     sendButton.disabled = true
-
+    sessionStorage.setItem('email',email)
     fetch(`http://localhost:${PORT}/send`,{
         method: 'POST',
         headers: {
@@ -31,7 +31,7 @@ document.getElementById("sendButton").addEventListener("click",()=>{
 })
 
 document.getElementById("submitButton").addEventListener("click",()=>{
-    const email = document.getElementById("email").value;
+    const email = document.getElementById("email").value; 
     const otp = document.getElementById("otp").value;
     const role = document.getElementById("role").value;
     fetch(`http://localhost:${PORT}/submit`,{
@@ -46,30 +46,49 @@ document.getElementById("submitButton").addEventListener("click",()=>{
         })
     })
     .then(response => {
-        console.log(response);
+        // console.log(response);
         return response.text()
     })
     .then(data => {
         // Show a success message or response handling
         console.log(`data: ${data}`)
-        if(data == '1'){
-            // otp is incorrect
-            alert("OTP is incorrect! Try again")
+        
+        if(data == '0'){
+            //student role
+            window.location = "course.html"
         }
-        else if(data == '0'){
-            // on success
-            window.location = "main.html";
+        else if(data == '1'){
+            // instructor role
+            window.location = "main.html"
         }
         else if(data == '2'){
-            window.location = "main.html";
+            // faculty advisor
+            window.location = "main.html"
         }
-        else if(data == '4'){
-            window.location = "main.html";
-        }
-        else if(data == '3' || data == '5'){
+        else if(data == '3' || data == '4'){
             alert("a stdent can't become instructor or faculty advisor or vice verse");
         }
-        // alert("form has been successfully send!");
+        else if(data == '5'){
+            alert("OTP is incorrect! Try again")
+        }
+
+        // if(data == '1'){
+        //     // otp is incorrect
+        //     alert("OTP is incorrect! Try again")
+        // }
+        // else if(data == '0'){
+        //     // on success
+        //     window.location = "main.html";
+        // }
+        // else if(data == '2'){
+        //     window.location = "main.html";
+        // }
+        // else if(data == '4'){
+        //     window.location = "main.html";
+        // }
+        // else if(data == '3' || data == '5'){
+        //     alert("a stdent can't become instructor or faculty advisor or vice verse");
+        // }
     })
     .catch(error => {
         console.error("Error:", error);
