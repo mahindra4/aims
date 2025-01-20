@@ -1,9 +1,10 @@
 // require('dotenv').config()
+PORT = 8888
 document.getElementById("sendButton").addEventListener("click",()=>{
     const email = document.getElementById("email").value
     sendButton.disabled = true
-    // console.log(process.env.port);
-    fetch(`http://localhost:12345/send`,{
+
+    fetch(`http://localhost:${PORT}/send`,{
         method: 'POST',
         headers: {
             'Content-type': 'application/json'
@@ -33,7 +34,7 @@ document.getElementById("submitButton").addEventListener("click",()=>{
     const email = document.getElementById("email").value;
     const otp = document.getElementById("otp").value;
     const role = document.getElementById("role").value;
-    fetch(`http://localhost:12345/submit`,{
+    fetch(`http://localhost:${PORT}/submit`,{
         method: 'POST',
         headers: {
             'Content-type': 'application/json'

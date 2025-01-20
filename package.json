@@ -9,7 +9,7 @@
   "version": "1.0.0",
   "main": "login.js",
   "scripts": {
-    "login": "nodemon --watch login.js login.js"
+    "server": "nodemon --watch server.js server.js"
   },
   "keywords": [],
   "author": "",

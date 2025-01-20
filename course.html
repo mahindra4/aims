@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        /* tr:not(:has(th)):hover{
+            background-color: #f2f2f2
+        } */
+        tbody tr:not(.clicked):hover{
+            background-color: #f2f2f2;
+        }
+        
+        .clicked{
+            background-color: #b3e0ff;
+        }
+
+    </style>
+</head>
+<body>
+    <a href="course.html" id="course-id">
+        courses
+    </a>
+    <a href="enrollements.html">
+        enrollements
+    </a>
+    <table>
+        <thead>
+            <tr bgcolor="gray">
+                <th>instructor</th>
+                <th>course</th>
+            </tr>
+        </thead>
+        <tbody id="instructor-course-table">
+        </tbody>
+    </table>
+    <br>
+    <button id="enroll">Enroll</button>
+    <script>
+        const selected_rows = [];
+        async function syncronize(){
+            try{
+                const response = await fetch('http://localhost:8888/course_data');
+                const data = await response.json();
+                tbody = document.getElementById("instructor-course-table")
+                data.forEach(item => {
+                    element = `
+                        <tr bgcolor="lightgray">
+                            <td>${item.instructor}</td>
+                            <td>${item.course_id}</td>
+                        </tr>
+                    `
+                    tbody.innerHTML+=element;
+                })
+                console.log('Hello')
+            }
+            catch(err){
+                console.log('Error: '+err);
+            }
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach(table_row => {
+                table_row.addEventListener('click',(event)=>{
+                    table_row.classList.toggle('clicked');
+                    const cells = table_row.querySelectorAll('td');
+                    const instructor = cells[0].textContent;
+                    const course = cells[1].textContent;
+                    const index = selected_rows.findIndex(item => {
+                        return item.instructor == instructor && item.course == course
+                    })
+                    console.log('index: '+index)
+                    if(index == -1){
+                        // if this cell is not there
+                        selected_rows.push({
+                            instructor: instructor,
+                            course: course
+                        })
+                    }
+                    else{
+                        selected_rows.splice(index,1);
+                    }
+                })  
+            })
+        }
+        syncronize();
+
+        
+    </script>
+</body>
+</html>

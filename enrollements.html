@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div>
+        <a href="course.html">
+            courses
+        </a>
+        <a href="enrollements.html">
+            enrollements
+        </a>
+    </div>
+    <h3>Store hours</h3>
+    <table>
+        <thead bgcolor="gray">
+            <tr>
+                <th>name</th>
+                <th>course</th>
+            </tr>
+        </thead>
+        <tbody bgcolor="lightgray" id="mytable">
+        </tbody>
+    </table>
+    <script>
+        var arr = [
+            {
+                name: 'nagi',
+                course: 'cs512'
+            },
+            {
+                name: 'joe',
+                course: 'cs302'
+            },
+            {
+                name: 'patric',
+                course: 'ma718'
+            }
+        ]
+        tbody = document.getElementById("mytable");
+        console.log('yo man clicked')
+        arr.forEach(item => {
+            table_row = `
+                <tr>
+                    <td>${item.name}</td>
+                    <td>${item.course}</td>
+                </tr>
+            `
+            tbody.innerHTML += table_row
+        })
+    </script>
+</body>
+</html>
