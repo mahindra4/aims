@@ -15,6 +15,7 @@
         </a>
     </div>
     <h4 id="email"></h4>
+    <h4>role: student</h4>
     <table>
         <thead>
             <tr bgcolor="gray">
@@ -51,6 +52,9 @@
                     }
                     else if(item.status == 'pfa'){
                         status = 'pending faculty adivisor approval';
+                    }
+                    else{
+                        status = item.status;
                     }
                     element = `
                         <tr bgcolor="lightgray">

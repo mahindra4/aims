@@ -192,11 +192,24 @@ app.post("/add_course/insert",async (req,res)=>{
         res.send('2');
     }
 })
-
 app.post("/add_course/get",async (req,res)=>{
     const email = req.body.email;
     const select_res = await client.query(`select course_id from courses where instructor=$1`,[email]);
     res.send(select_res.rows);
+})
+
+app.post("/faculty_advisor_approval",async (req,res)=>{
+    const email = req.body.email;
+    const select_res = await client.query(`select student_email,instructor,course from student_selected_courses where status='pfa'`);
+    res.send(select_res.rows);
+})
+
+app.post("/update_pfa",(req,res)=>{
+    const selected_rows = req.body.selected_rows;
+    selected_rows.forEach(async row=>{
+        await client.query(`update student_selected_courses set status='enrolled' where student_email=$1 and course=$2`,[row.student_email,row.course]);
+    })
+    res.send('updated the database');
 })
 
 server = app.listen(process.env.PORT,()=>{

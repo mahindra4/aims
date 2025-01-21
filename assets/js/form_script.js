@@ -63,7 +63,7 @@ document.getElementById("submitButton").addEventListener("click",()=>{
         }
         else if(data == '2'){
             // faculty advisor
-            window.location = "main.html"
+            window.location = "./faculty_advisor/enroll_students.html"
         }
         else if(data == '3' || data == '4'){
             alert("a stdent can't become instructor or faculty advisor or vice verse");
