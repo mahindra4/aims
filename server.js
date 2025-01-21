@@ -138,7 +138,6 @@ app.post("/submit",async (req,res)=>{
 
 app.get("/course_data",async (req,res)=>{
     const select_res = await client.query('select * from courses')
-    // console.log(select_res.rows);
     res.send(select_res.rows)
 })
 
@@ -173,6 +172,31 @@ app.post("/student_requests/instructor_approved",(req,res)=>{
         await client.query(`update student_selected_courses set status='pfa' where student_email=$1 and instructor=$2 and course=$3`,[row.email,email,row.course]);
     })
     res.send('updated the database')
+})
+
+app.post("/add_course/insert",async (req,res)=>{
+    const email = req.body.email;
+    const course = req.body.course;
+    const select_res = await client.query(`select * from courses where course_id=$1`,[course])
+    
+    console.log(req.body);
+    console.log(select_res.rows)
+    if(select_res.rowCount == 0){
+        await client.query(`insert into courses values($1,$2)`,[course,email]);
+        res.send('0')
+    }
+    else if(select_res.rows[0].instructor == email){
+        res.send('1');
+    }    
+    else{
+        res.send('2');
+    }
+})
+
+app.post("/add_course/get",async (req,res)=>{
+    const email = req.body.email;
+    const select_res = await client.query(`select course_id from courses where instructor=$1`,[email]);
+    res.send(select_res.rows);
 })
 
 server = app.listen(process.env.PORT,()=>{

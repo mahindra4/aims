@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+
+    </style>
+</head>
+<body>
+    <div>
+        <a href="add_courses.html">
+            add courses
+        </a>
+        <a href="student_requests.html">
+            student requests
+        </a>
+    </div>
+    <h4 id="email"></h4>
+
+    <label for="add_course_input">add course</label>
+    <input type="text" id="add_course_input">
+    <br>
+    <br>
+    <button id="add_course">add course</button>
+    <br>
+    <br>
+    <table>
+        <thead>
+            <tr bgcolor="gray">
+                <th>course</th>
+            </tr>
+        </thead>
+        <tbody id="courses">
+        </tbody>
+    </table>
+    <script>
+        const PORT = 33333;
+
+        email = sessionStorage.getItem('email') // instructor email
+        // email = 'a'
+        document.getElementById("email").innerHTML = 'user: '+email;
+
+        // fill the courses from the database courses
+        function add_course(course){
+            // adds the course into the table
+            document.getElementById("courses").innerHTML += `
+                <tr bgcolor="lightgray">
+                    <td>${course}</td>
+                </tr>
+            `
+        }
+
+        fetch(`http://localhost:${PORT}/add_course/get`,{
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: email
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(item => {
+                // insert added course into the table
+                add_course(item.course_id);
+            })
+        })
+
+        document.getElementById("add_course").addEventListener('click',async (event)=>{
+            const course = document.getElementById("add_course_input").value.trim();
+            if(course){
+                // request server to add the course info into the database courses
+                const response = await fetch(`http://localhost:${PORT}/add_course/insert`,{
+                    method: 'POST',
+                    headers: {
+                        'Content-type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        course: course
+                    })
+                })
+                const data = await response.text();
+                if(data == '0'){
+                    console.log('inserted into database');
+                    add_course(course);
+                }
+                else if(data == '1'){
+                    alert("this course can't be added multiple times")
+                }
+                else if(data == '2'){
+                    alert("this course was already teaching by some other instructor")
+                }
+            }
+            else{
+                alert('add course field is empty')
+            }
+        })
+    </script>
+</body>
+</html>

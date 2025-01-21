@@ -14,6 +14,14 @@
     </style>
 </head>
 <body>
+    <div>
+        <a href="add_courses.html">
+            add courses
+        </a>
+        <a href="student_requests.html">
+            student requests
+        </a>
+    </div>
     <h4 id="email"></h4>
     <table>
         <thead>
@@ -28,12 +36,12 @@
     <br>
     <button id="accept">accept</button>
     <script>
-        const PORT = 65535;
+        const PORT = 33333;
         
         let email = sessionStorage.getItem("email")
 
         //
-        email = 'a';
+        // email = 'a';
 
         document.getElementById("email").innerHTML = "user: "+email;
         async function syncronize(){
@@ -47,7 +55,7 @@
                 }) 
             })
             const data = await response.json();
-            console.log(data);
+            // console.log(data);
             tbody = document.getElementById('student-requests');
             data.forEach(item=>{
                 element = `

@@ -1,5 +1,5 @@
 // require('dotenv').config()
-const PORT = 65535
+const PORT = 33333
 document.getElementById("sendButton").addEventListener("click",()=>{
     const email = document.getElementById("email").value
     sendButton.disabled = true
@@ -59,7 +59,7 @@ document.getElementById("submitButton").addEventListener("click",()=>{
         }
         else if(data == '1'){
             // instructor role
-            window.location = "main.html"
+            window.location = "./instructor/add_courses.html"
         }
         else if(data == '2'){
             // faculty advisor
