@@ -36,6 +36,8 @@
     </table>
     <br>
     <button id="accept">accept</button>
+    <br>
+    <button id="logout">logout</button>
     <script>
         const PORT = 33333;
         
@@ -43,7 +45,9 @@
 
         //
         // email = 'a';
-
+        document.getElementById("logout").addEventListener('click',(event)=>{
+            window.location = '../login.html'
+        })
         document.getElementById("email").innerHTML = "user: "+email;
         async function syncronize(){
             const response = await fetch(`http://localhost:${PORT}/student_requests`,{

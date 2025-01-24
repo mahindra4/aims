@@ -41,11 +41,16 @@
     </table>
     <br>
     <button id="enroll">Enroll</button>
+    <br>
+    <button id="logout">logout</button>
     <script>
         const PORT = 33333
         const email = sessionStorage.getItem('email')
         document.getElementById("email").innerHTML = 'user: '+email;
         // const selected_rows = []; // contains all the selected rows 
+        document.getElementById("logout").addEventListener('click',(event)=>{
+            window.location = '../login.html'
+        })
         async function syncronize(){
             try{
                 const response = await fetch(`http://localhost:${PORT}/course_data`);

@@ -2,7 +2,8 @@
 const PORT = 33333
 document.getElementById("sendButton").addEventListener("click",()=>{
     const email = document.getElementById("email").value
-    sendButton.disabled = true
+    sendButton.disabled = true;
+    document.getElementById('email').disabled = true;
     sessionStorage.setItem('email',email)
     fetch(`http://localhost:${PORT}/send`,{
         method: 'POST',

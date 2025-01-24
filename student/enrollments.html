@@ -28,10 +28,15 @@
 
         </tbody>
     </table>
+    <br>
+    <button id="logout">logout</button>
     <script>
         const PORT = 33333
         const email = sessionStorage.getItem('email');
         document.getElementById("email").innerHTML = 'user: '+email;
+        document.getElementById("logout").addEventListener('click',(event)=>{
+            window.location = '../login.html'
+        })
         async function syncronize(){
             try{
                 const response = await fetch(`http://localhost:${PORT}/student_selected_courses/enrollments`,{
