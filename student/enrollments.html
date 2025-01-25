@@ -32,9 +32,10 @@
     <button id="logout">logout</button>
     <script>
         const PORT = 33333
-        const email = sessionStorage.getItem('email');
+        const email = localStorage.getItem('email');
         document.getElementById("email").innerHTML = 'user: '+email;
         document.getElementById("logout").addEventListener('click',(event)=>{
+            localStorage.removeItem('email')
             window.location = '../login.html'
         })
         async function syncronize(){

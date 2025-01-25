@@ -40,9 +40,10 @@
     <script>
         const PORT = 33333;
         document.getElementById("logout").addEventListener('click',(event)=>{
+            localStorage.removeItem('email')
             window.location = '../login.html'
         })
-        email = sessionStorage.getItem('email') // instructor email
+        email = localStorage.getItem('email') // instructor email
         // email = 'a'
         document.getElementById("email").innerHTML = 'user: '+email;
 

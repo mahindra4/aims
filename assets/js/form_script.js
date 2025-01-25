@@ -1,10 +1,19 @@
 // require('dotenv').config()
 const PORT = 33333
 document.getElementById("sendButton").addEventListener("click",()=>{
+
+    // alert('there is already another person logged in, feel free to use another brower like edge')
     const email = document.getElementById("email").value
+
+    if(localStorage.getItem('email') !== null){
+        alert('there is already another person logged in, feel free to use another brower like edge')
+        return;
+    }
+    localStorage.setItem('email',email)
+    
     sendButton.disabled = true;
     document.getElementById('email').disabled = true;
-    sessionStorage.setItem('email',email)
+    
     fetch(`http://localhost:${PORT}/send`,{
         method: 'POST',
         headers: {
