@@ -1,16 +1,57 @@
 // require('dotenv').config()
 const PORT = 33333
+// email = sessionStorage.getItem('email')
+// if(email){
+//     sessionStorage.removeItem('email')
+    
+// }
+
+// const navigationEntries = performance.getEntriesByType('navigation');
+// const navigationType = (navigationEntries.length > 0) ? navigationEntries[0].type : null;
+
+// fetch('http://localhost:33333/print',{
+//     method: 'POST',
+//     headers: {
+//         'Content-type': 'application/json'
+//     },
+//     body: JSON.stringify({
+//         navigationEntries
+//     })
+// })
+
+// console.log(navigationEntries.length)
+// console.log(navigationType)
+// if (navigationType === 'reload') {
+//     // alert("Refresh button is clicked");
+//     sessionStorage.setItem('is_navigating','true')
+// } else if(navigationType === 'navigate'){
+//     sessionStorage.setItem('is_navigating','true')
+// } else if (navigationType === 'back_forward') {
+//     // alert("Back or forward button is clicked");
+// } else {
+//     // alert("This is a new page load");
+// }
+
+
+// const is_navigating = sessionStorage.getItem('is_navigating')
+// console.log(is_navigating)
+// if(!is_navigating){
+//     localStorage.removeItem('email')
+// }
 
 sessionStorage.removeItem('is_navigating')
 window.addEventListener('beforeunload',(event)=>{
-    is_navigating = sessionStorage.getItem('is_navigating')
-    if(!is_navigating){
-        localStorage.removeItem('email')
-    }
+    // is_navigating = sessionStorage.getItem('is_navigating')
+    // if(!is_navigating){
+    //     localStorage.removeItem('email')
+    // }
+    localStorage.removeItem('email')
 })
 
+send_clicked = false;
 document.getElementById("sendButton").addEventListener("click",()=>{
 
+    send_clicked = true
     // alert('there is already another person logged in, feel free to use another brower like edge')
     const email = document.getElementById("email").value
 
@@ -19,7 +60,8 @@ document.getElementById("sendButton").addEventListener("click",()=>{
         return;
     }
     localStorage.setItem('email',email)
-    
+    sessionStorage.setItem('email',email)
+
     sendButton.disabled = true;
     document.getElementById('email').disabled = true;
     
@@ -51,6 +93,10 @@ document.getElementById("sendButton").addEventListener("click",()=>{
 })
 
 document.getElementById("submitButton").addEventListener("click",()=>{
+    if(!send_clicked){
+        alert('first you need to send the email to verify the otp')
+        return;
+    }
     const email = document.getElementById("email").value; 
     const otp = document.getElementById("otp").value;
     const role = document.getElementById("role").value;

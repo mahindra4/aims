@@ -68,25 +68,25 @@
             })
 
             window.addEventListener('beforeunload',(event)=>{
-                const is_navigating = sessionStorage.getItem('is_navigating')
-                if(!is_navigating){
-                    localStorage.removeItem('email')
-                }
-                // fetch(`http://localhost:${PORT}/tab_closed`)
+                // const is_navigating = sessionStorage.getItem('is_navigating')
+                // if(!is_navigating){
+                //     localStorage.removeItem('email')
+                // }
+                localStorage.removeItem('email')
             })
 
 
             document.getElementById("logout").addEventListener('click',(event)=>{
                 localStorage.removeItem('email')
+                sessionStorage.removeItem('email')
                 window.location = '../login.html'
             })
-            email = localStorage.getItem('email') // instructor email
-            // email = 'a'
-            
+            // email = localStorage.getItem('email') // instructor email
+            email = sessionStorage.getItem('email') // instructor email
             if(!email){
                 window.location = '../login.html'
             }
-
+            localStorage.setItem('email',email)
             document.getElementById("email").innerHTML = 'user: '+email;
 
             // fill the courses from the database courses

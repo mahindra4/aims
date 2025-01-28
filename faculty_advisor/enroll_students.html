@@ -38,11 +38,16 @@
 
         document.addEventListener('DOMContentLoaded',()=>{
             const PORT = 33333;
-            const email = localStorage.getItem('email');
-
+            // const email = localStorage.getItem('email');
+            const email = sessionStorage.getItem('email');
             if(!email){
                 window.location = '../error.html'
             }
+            localStorage.setItem('email',email)
+
+            document.addEventListener('beforeunload',(event)=>{
+                localStorage.removeItem('email')
+            })
 
             document.getElementById('email').innerHTML = 'user: '+email;
             
@@ -51,6 +56,7 @@
 
             document.getElementById("logout").addEventListener('click',(event)=>{
                 localStorage.removeItem('email')
+                sessionStorage.removeItem('email')
                 window.location = '../login.html'
             })
             fetch(`http://localhost:${PORT}/faculty_advisor_approval`,{

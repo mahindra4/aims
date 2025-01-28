@@ -11,7 +11,12 @@
     <h1>Please log in to access this page</h1>
     <p>You are not logged in. Redirecting you to the login page.</p>
     <script>
+        window.addEventListener('beforeunload',(event)=>{
+            localStorage.removeItem('email')
+        })
         setTimeout(() => {
+            localStorage.removeItem('email')
+            sessionStorage.removeItem('email')
             window.location = 'login.html'; // Redirect to login page after a delay
         }, 3000); // Delay of 3 seconds before redirect
     </script>
