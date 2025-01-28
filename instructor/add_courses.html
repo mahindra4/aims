@@ -10,10 +10,10 @@
 </head>
 <body>
     <div>
-        <a href="add_courses.html">
+        <a href="add_courses.html" id="add_courses_link">
             add courses
         </a>
-        <a href="student_requests.html">
+        <a href="student_requests.html" id="student_requests_link">
             student requests
         </a>
     </div>
@@ -39,6 +39,26 @@
     <button id="logout">logout</button>
     <script>
         const PORT = 33333;
+        
+        
+        sessionStorage.removeItem('is_navigating')
+
+        document.getElementById('add_courses_link').addEventListener('click',(event)=>{
+            sessionStorage.setItem('is_navigating','true')
+        })
+        document.getElementById('student_requests_link').addEventListener('click',(event)=>{
+            sessionStorage.setItem('is_navigating','true')
+        })
+
+        window.addEventListener('beforeunload',(event)=>{
+            const is_navigating = sessionStorage.getItem('is_navigating')
+            if(!is_navigating){
+                localStorage.removeItem('email')
+            }
+            // fetch(`http://localhost:${PORT}/tab_closed`)
+        })
+
+
         document.getElementById("logout").addEventListener('click',(event)=>{
             localStorage.removeItem('email')
             window.location = '../login.html'

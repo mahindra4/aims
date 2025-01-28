@@ -1,5 +1,14 @@
 // require('dotenv').config()
 const PORT = 33333
+
+sessionStorage.removeItem('is_navigating')
+window.addEventListener('beforeunload',(event)=>{
+    is_navigating = sessionStorage.getItem('is_navigating')
+    if(!is_navigating){
+        localStorage.removeItem('email')
+    }
+})
+
 document.getElementById("sendButton").addEventListener("click",()=>{
 
     // alert('there is already another person logged in, feel free to use another brower like edge')
@@ -65,14 +74,17 @@ document.getElementById("submitButton").addEventListener("click",()=>{
         
         if(data == '0'){
             //student role
+            sessionStorage.setItem('is_navigating','true')
             window.location = "./student/course.html"
         }
         else if(data == '1'){
             // instructor role
+            sessionStorage.setItem('is_navigating','true')
             window.location = "./instructor/add_courses.html"
         }
         else if(data == '2'){
             // faculty advisor
+            sessionStorage.setItem('is_navigating','true')
             window.location = "./faculty_advisor/enroll_students.html"
         }
         else if(data == '3' || data == '4'){

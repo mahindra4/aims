@@ -20,10 +20,10 @@
 </head>
 <body>
     <div>
-        <a href="course.html">
+        <a href="course.html" id="course_link">
             courses
         </a>
-        <a href="enrollments.html">
+        <a href="enrollments.html" id="enrollments_link">
             enrollements
         </a>
     </div>
@@ -46,8 +46,30 @@
     <script>
         const PORT = 33333
         const email = localStorage.getItem('email')
+        if(!email){
+            
+        }
         document.getElementById("email").innerHTML = 'user: '+email;
-        // const selected_rows = []; // contains all the selected rows 
+        // const selected_rows = []; // contains all the selected rows
+
+        sessionStorage.removeItem('is_navigating')
+
+        document.getElementById('course_link').addEventListener('click',(event)=>{
+            sessionStorage.setItem('is_navigating','true')
+        })
+        document.getElementById('enrollments_link').addEventListener('click',(event)=>{
+            sessionStorage.setItem('is_navigating','true')
+        })
+
+        window.addEventListener('beforeunload',(event)=>{
+            const is_navigating = sessionStorage.getItem('is_navigating')
+            if(!is_navigating){
+                localStorage.removeItem('email')
+            }
+            // fetch(`http://localhost:${PORT}/tab_closed`)
+        })
+
+
         document.getElementById("logout").addEventListener('click',(event)=>{
             localStorage.removeItem('email')
             window.location = '../login.html'

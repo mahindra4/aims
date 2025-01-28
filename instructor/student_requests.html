@@ -45,6 +45,9 @@
 
         //
         // email = 'a';
+        window.addEventListener('beforeunload',(event)=>{
+            // localStorage.clear()
+        })
         document.getElementById("logout").addEventListener('click',(event)=>{
             localStorage.removeItem('email')
             window.location = '../login.html'

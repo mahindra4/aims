@@ -35,6 +35,10 @@
         const PORT = 33333;
         const email = localStorage.getItem('email');
         document.getElementById('email').innerHTML = 'user: '+email;
+        
+        sessionStorage.removeItem('isNavigating')
+
+
         document.getElementById("logout").addEventListener('click',(event)=>{
             localStorage.removeItem('email')
             window.location = '../login.html'

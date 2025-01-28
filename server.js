@@ -231,6 +231,11 @@ process.on('SIGTERM',()=>{
         process.exit(0)
     })
 })
+
+app.get('/tab_closed',(req,res)=>{
+    console.log('TAB CLOSED')
+    res.redirect('www.google.com')
+})
 // app is listening of 12345 port (http://localhost:<port>)
 // when a post request is made to the server at (http://localhost:<port>) then first express.urlencoded() is invoked to parse the data (url combined data)
 // and it's passed to the post to handle the request at "/" and req.body contains the information and res can send the data back to the webpage
