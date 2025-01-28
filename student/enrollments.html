@@ -42,72 +42,79 @@
     <button id="logout">Logout</button>
 
     <script>
-        const PORT = 33333
-        const email = localStorage.getItem('email');
-        document.getElementById("email").innerHTML = 'user: '+email;
+        document.addEventListener('DOMContentLoaded',()=>{
+            const PORT = 33333
+            const email = localStorage.getItem('email');
+
+            if(!email){
+                window.location = '../error.html'
+            }
+
+            document.getElementById("email").innerHTML = 'user: '+email;
 
 
-        sessionStorage.removeItem('is_navigating')
+            sessionStorage.removeItem('is_navigating')
 
-        document.getElementById('course_link').addEventListener('click',(event)=>{
-            sessionStorage.setItem('is_navigating','true')
-        })
-        document.getElementById('enrollments_link').addEventListener('click',(event)=>{
-            sessionStorage.setItem('is_navigating','true')
-        })
+            document.getElementById('course_link').addEventListener('click',(event)=>{
+                sessionStorage.setItem('is_navigating','true')
+            })
+            document.getElementById('enrollments_link').addEventListener('click',(event)=>{
+                sessionStorage.setItem('is_navigating','true')
+            })
 
-        window.addEventListener('beforeunload',(event)=>{
-            const is_navigating = sessionStorage.getItem('is_navigating')
-            if(!is_navigating){
+            window.addEventListener('beforeunload',(event)=>{
+                const is_navigating = sessionStorage.getItem('is_navigating')
+                if(!is_navigating){
+                    localStorage.removeItem('email')
+                }
+                // fetch(`http://localhost:${PORT}/tab_closed`)
+            })
+
+
+            document.getElementById("logout").addEventListener('click',(event)=>{
                 localStorage.removeItem('email')
-            }
-            // fetch(`http://localhost:${PORT}/tab_closed`)
-        })
-
-
-        document.getElementById("logout").addEventListener('click',(event)=>{
-            localStorage.removeItem('email')
-            window.location = '../login.html'
-        })
-        async function syncronize(){
-            try{
-                const response = await fetch(`http://localhost:${PORT}/student_selected_courses/enrollments`,{
-                    method: 'POST',
-                    headers: {
-                        'Content-type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        email: email
+                window.location = '../login.html'
+            })
+            async function syncronize(){
+                try{
+                    const response = await fetch(`http://localhost:${PORT}/student_selected_courses/enrollments`,{
+                        method: 'POST',
+                        headers: {
+                            'Content-type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            email: email
+                        })
+                    });
+                    const data = await response.json();
+                    tbody = document.getElementById('student-selected-courses');
+                    data.forEach(item => {
+                        status = "-";
+                        if(item.status == 'pia'){
+                            status = 'pending instructor approval';
+                        }
+                        else if(item.status == 'pfa'){
+                            status = 'pending faculty adivisor approval';
+                        }
+                        else{
+                            status = item.status;
+                        }
+                        element = `
+                            <tr bgcolor="lightgray">
+                                <td>${item.instructor}</td>
+                                <td>${item.course}</td>
+                                <td>${status}</td>
+                            </tr>
+                        `
+                        tbody.innerHTML+=element;
                     })
-                });
-                const data = await response.json();
-                tbody = document.getElementById('student-selected-courses');
-                data.forEach(item => {
-                    status = "-";
-                    if(item.status == 'pia'){
-                        status = 'pending instructor approval';
-                    }
-                    else if(item.status == 'pfa'){
-                        status = 'pending faculty adivisor approval';
-                    }
-                    else{
-                        status = item.status;
-                    }
-                    element = `
-                        <tr bgcolor="lightgray">
-                            <td>${item.instructor}</td>
-                            <td>${item.course}</td>
-                            <td>${status}</td>
-                        </tr>
-                    `
-                    tbody.innerHTML+=element;
-                })
+                }
+                catch(err){
+                    console.log('Error: '+err);
+                }
             }
-            catch(err){
-                console.log('Error: '+err);
-            }
-        }
-        syncronize()
+            syncronize()
+        })
     </script>
 </body>
 </html>

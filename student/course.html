@@ -41,94 +41,126 @@
     <br>
     <button id="logout">Logout</button>
     <script>
-        const PORT = 33333
-        const email = localStorage.getItem('email')
-        if(!email){
-
-        }
-        document.getElementById("email").innerHTML = 'user: '+email;
-        // const selected_rows = []; // contains all the selected rows
-
-        sessionStorage.removeItem('is_navigating')
-
-        document.getElementById('course_link').addEventListener('click',(event)=>{
-            sessionStorage.setItem('is_navigating','true')
-        })
-        document.getElementById('enrollments_link').addEventListener('click',(event)=>{
-            sessionStorage.setItem('is_navigating','true')
-        })
-
-        window.addEventListener('beforeunload',(event)=>{
-            const is_navigating = sessionStorage.getItem('is_navigating')
-            if(!is_navigating){
-                localStorage.removeItem('email')
+        document.addEventListener('DOMContentLoaded',()=>{
+            const PORT = 33333
+            const email = localStorage.getItem('email')
+            if(!email){
+                window.location = '../error.html'
             }
-            // fetch(`http://localhost:${PORT}/tab_closed`)
-        })
+            document.getElementById("email").innerHTML = 'user: '+email;
+            // const selected_rows = []; // contains all the selected rows
 
+            sessionStorage.removeItem('is_navigating')
 
-        document.getElementById("logout").addEventListener('click',(event)=>{
-            localStorage.removeItem('email')
-            window.location = '../login.html'
-        })
-        async function syncronize(){
-            try{
-                const response = await fetch(`http://localhost:${PORT}/course_data`);
-                const data = await response.json();
-                tbody = document.getElementById("instructor-course-table")
-                data.forEach(item => {
-                    element = `
-                        <tr bgcolor="lightgray">
-                            <td>${item.instructor}</td>
-                            <td>${item.course_id}</td>
-                        </tr>
-                    `
-                    tbody.innerHTML+=element;
-                })
-            }
-            catch(err){
-                console.log('Error: '+err);
-            }
-            const rows = document.querySelectorAll('#instructor-course-table tr');
-            rows.forEach(table_row => {
-                table_row.addEventListener('click',(event)=>{
-                    table_row.classList.toggle('clicked');
-                })  
+            document.getElementById('course_link').addEventListener('click',(event)=>{
+                sessionStorage.setItem('is_navigating','true')
             })
-        }
-        syncronize();
+            document.getElementById('enrollments_link').addEventListener('click',(event)=>{
+                sessionStorage.setItem('is_navigating','true')
+            })
 
-        document.getElementById("enroll").addEventListener('click',async (event)=>{
-            table_rows = document.querySelectorAll('#instructor-course-table tr');
-            selected_rows = [];
-            table_rows.forEach(table_row=>{
-                items = table_row.querySelectorAll('td');
-                instructor = items[0].textContent;
-                course = items[1].textContent;
-                if(table_row.classList.contains('clicked')){
-                    selected_rows.push({
-                        instructor: instructor,
-                        course: course
-                    })
-                    table_row.classList.toggle('clicked')
+            window.addEventListener('beforeunload',(event)=>{
+                
+                // const navigationEntries = performance.getEntriesByType('navigation');
+                // const navigationType = (navigationEntries.length > 0) ? navigationEntries[0].type : null;
+                
+                // fetch('http://localhost:33333/print',{
+                //     method: 'POST',
+                //     headers: {
+                //         'Content-type': 'application/json'
+                //     },
+                //     body: JSON.stringify({
+                //         navigationEntries
+                //     })
+                // })
+
+                // console.log(navigationEntries.length)
+                // console.log(navigationType)
+                // if (navigationType === 'reload') {
+                //     // alert("Refresh button is clicked");
+                //     sessionStorage.setItem('is_navigating','true')
+                // } else if(navigationType === 'navigate'){
+                //     sessionStorage.setItem('is_navigating','true')
+                // } else if (navigationType === 'back_forward') {
+                //     // alert("Back or forward button is clicked");
+                // } else {
+                //     // alert("This is a new page load");
+                // }
+
+
+                const is_navigating = sessionStorage.getItem('is_navigating')
+                console.log(is_navigating)
+                if(!is_navigating){
+                    localStorage.removeItem('email')
                 }
+                // fetch(`http://localhost:${PORT}/tab_closed`)
             })
-            // selected_rows.forEach(item => console.log(item));
 
-            // ask server to store the selected courses in the database -> student_selected_courses
-            const response = await fetch(`http://localhost:${PORT}/student_selected_courses/course`,{
-                method: 'POST',
-                headers: {
-                    'Content-type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: email,
-                    selected_rows: selected_rows
+
+            document.getElementById("logout").addEventListener('click',(event)=>{
+                localStorage.removeItem('email')
+                window.location = '../login.html'
+            })
+            async function syncronize(){
+                try{
+                    const response = await fetch(`http://localhost:${PORT}/course_data`);
+                    const data = await response.json();
+                    tbody = document.getElementById("instructor-course-table")
+                    data.forEach(item => {
+                        element = `
+                            <tr bgcolor="lightgray">
+                                <td>${item.instructor}</td>
+                                <td>${item.course_id}</td>
+                            </tr>
+                        `
+                        tbody.innerHTML+=element;
+                    })
+                }
+                catch(err){
+                    console.log('Error: '+err);
+                }
+                const rows = document.querySelectorAll('#instructor-course-table tr');
+                rows.forEach(table_row => {
+                    table_row.addEventListener('click',(event)=>{
+                        table_row.classList.toggle('clicked');
+                    })  
                 })
-            }) 
-            const data = await response.text()
-            console.log(data)
+            }
+            syncronize();
+
+            document.getElementById("enroll").addEventListener('click',async (event)=>{
+                table_rows = document.querySelectorAll('#instructor-course-table tr');
+                selected_rows = [];
+                table_rows.forEach(table_row=>{
+                    items = table_row.querySelectorAll('td');
+                    instructor = items[0].textContent;
+                    course = items[1].textContent;
+                    if(table_row.classList.contains('clicked')){
+                        selected_rows.push({
+                            instructor: instructor,
+                            course: course
+                        })
+                        table_row.classList.toggle('clicked')
+                    }
+                })
+                // selected_rows.forEach(item => console.log(item));
+
+                // ask server to store the selected courses in the database -> student_selected_courses
+                const response = await fetch(`http://localhost:${PORT}/student_selected_courses/course`,{
+                    method: 'POST',
+                    headers: {
+                        'Content-type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        selected_rows: selected_rows
+                    })
+                }) 
+                const data = await response.text()
+                console.log(data)
+            })
         })
+        
     </script>
 </body>
 </html>

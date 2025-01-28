@@ -51,94 +51,100 @@
     <br>
     <button id="logout">Logout</button>
     <script>
-        const PORT = 33333;
+
+        document.addEventListener('DOMContentLoaded',()=>{
+            const PORT = 33333;
         
-        let email = localStorage.getItem("email")
+            let email = localStorage.getItem("email")
 
-        
-        sessionStorage.removeItem('is_navigating')
-
-        document.getElementById('add_courses_link').addEventListener('click',(event)=>{
-            sessionStorage.setItem('is_navigating','true')
-        })
-        document.getElementById('student_requests_link').addEventListener('click',(event)=>{
-            sessionStorage.setItem('is_navigating','true')
-        })
-
-        window.addEventListener('beforeunload',(event)=>{
-            const is_navigating = sessionStorage.getItem('is_navigating')
-            if(!is_navigating){
-                localStorage.removeItem('email')
+            if(!email){
+                window.location = '../error.html'
             }
-            // fetch(`http://localhost:${PORT}/tab_closed`)
-        })
+            
+            sessionStorage.removeItem('is_navigating')
 
+            document.getElementById('add_courses_link').addEventListener('click',(event)=>{
+                sessionStorage.setItem('is_navigating','true')
+            })
+            document.getElementById('student_requests_link').addEventListener('click',(event)=>{
+                sessionStorage.setItem('is_navigating','true')
+            })
 
-        document.getElementById("logout").addEventListener('click',(event)=>{
-            localStorage.removeItem('email')
-            window.location = '../login.html'
-        })
-        document.getElementById("email").innerHTML = "user: "+email;
-        async function syncronize(){
-            const response = await fetch(`http://localhost:${PORT}/student_requests`,{
-                method: 'POST',
-                headers: {
-                    'Content-type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: email
-                }) 
-            })
-            const data = await response.json();
-            // console.log(data);
-            tbody = document.getElementById('student-requests');
-            data.forEach(item=>{
-                element = `
-                    <tr bgcolor="lightgray">
-                        <td>${item.student_email}</td>
-                        <td>${item.course}</td>
-                    </tr>
-                `
-                tbody.innerHTML+=element;
-            })
-            document.querySelectorAll('#student-requests tr').forEach(row=>{
-            row.addEventListener('click',(event)=>{
-                row.classList.toggle('clicked');
-            })
-        })
-        }
-        syncronize()
-
-        document.getElementById('accept').addEventListener('click',async (event)=>{
-            const selected_rows = [];
-            document.querySelectorAll('#student-requests tr').forEach(row=>{
-                if(row.classList.contains('clicked')){
-                    // selected elements
-                    const rows = row.querySelectorAll('td')
-                    const email = rows[0].textContent;
-                    const course = rows[1].textContent;
-                    selected_rows.push({
-                        email: email,
-                        course: course
-                    })
-                    row.remove()
+            window.addEventListener('beforeunload',(event)=>{
+                const is_navigating = sessionStorage.getItem('is_navigating')
+                if(!is_navigating){
+                    localStorage.removeItem('email')
                 }
+                // fetch(`http://localhost:${PORT}/tab_closed`)
             })
-            // selected_rows.forEach(item => console.log(item))
-            const response = await fetch(`http://localhost:${PORT}/student_requests/instructor_approved`,{
-                method: 'POST',
-                headers: {
-                    'Content-type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: email,
-                    selected_rows: selected_rows
-                })
-            }) 
-            const data = await response.text();
-            console.log(data);
-        })
 
+
+            document.getElementById("logout").addEventListener('click',(event)=>{
+                localStorage.removeItem('email')
+                window.location = '../login.html'
+            })
+            document.getElementById("email").innerHTML = "user: "+email;
+            async function syncronize(){
+                const response = await fetch(`http://localhost:${PORT}/student_requests`,{
+                    method: 'POST',
+                    headers: {
+                        'Content-type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email
+                    }) 
+                })
+                const data = await response.json();
+                // console.log(data);
+                tbody = document.getElementById('student-requests');
+                data.forEach(item=>{
+                    element = `
+                        <tr bgcolor="lightgray">
+                            <td>${item.student_email}</td>
+                            <td>${item.course}</td>
+                        </tr>
+                    `
+                    tbody.innerHTML+=element;
+                })
+                document.querySelectorAll('#student-requests tr').forEach(row=>{
+                row.addEventListener('click',(event)=>{
+                    row.classList.toggle('clicked');
+                })
+            })
+            }
+            syncronize()
+
+            document.getElementById('accept').addEventListener('click',async (event)=>{
+                const selected_rows = [];
+                document.querySelectorAll('#student-requests tr').forEach(row=>{
+                    if(row.classList.contains('clicked')){
+                        // selected elements
+                        const rows = row.querySelectorAll('td')
+                        const email = rows[0].textContent;
+                        const course = rows[1].textContent;
+                        selected_rows.push({
+                            email: email,
+                            course: course
+                        })
+                        row.remove()
+                    }
+                })
+                // selected_rows.forEach(item => console.log(item))
+                const response = await fetch(`http://localhost:${PORT}/student_requests/instructor_approved`,{
+                    method: 'POST',
+                    headers: {
+                        'Content-type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        selected_rows: selected_rows
+                    })
+                }) 
+                const data = await response.text();
+                console.log(data);
+            })
+        })
+        
     </script>
 </body>
 </html>

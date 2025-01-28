@@ -55,92 +55,99 @@
     <br>
     <button id="logout">Logout</button>
     <script>
-        const PORT = 33333;
-        
-        
-        sessionStorage.removeItem('is_navigating')
 
-        document.getElementById('add_courses_link').addEventListener('click',(event)=>{
-            sessionStorage.setItem('is_navigating','true')
-        })
-        document.getElementById('student_requests_link').addEventListener('click',(event)=>{
-            sessionStorage.setItem('is_navigating','true')
-        })
+        document.addEventListener('DOMContentLoaded',()=>{
+            const PORT = 33333;
+            sessionStorage.removeItem('is_navigating')
 
-        window.addEventListener('beforeunload',(event)=>{
-            const is_navigating = sessionStorage.getItem('is_navigating')
-            if(!is_navigating){
+            document.getElementById('add_courses_link').addEventListener('click',(event)=>{
+                sessionStorage.setItem('is_navigating','true')
+            })
+            document.getElementById('student_requests_link').addEventListener('click',(event)=>{
+                sessionStorage.setItem('is_navigating','true')
+            })
+
+            window.addEventListener('beforeunload',(event)=>{
+                const is_navigating = sessionStorage.getItem('is_navigating')
+                if(!is_navigating){
+                    localStorage.removeItem('email')
+                }
+                // fetch(`http://localhost:${PORT}/tab_closed`)
+            })
+
+
+            document.getElementById("logout").addEventListener('click',(event)=>{
                 localStorage.removeItem('email')
+                window.location = '../login.html'
+            })
+            email = localStorage.getItem('email') // instructor email
+            // email = 'a'
+            
+            if(!email){
+                window.location = '../login.html'
             }
-            // fetch(`http://localhost:${PORT}/tab_closed`)
-        })
 
+            document.getElementById("email").innerHTML = 'user: '+email;
 
-        document.getElementById("logout").addEventListener('click',(event)=>{
-            localStorage.removeItem('email')
-            window.location = '../login.html'
-        })
-        email = localStorage.getItem('email') // instructor email
-        // email = 'a'
-        document.getElementById("email").innerHTML = 'user: '+email;
+            // fill the courses from the database courses
+            function add_course(course){
+                // adds the course into the table
+                document.getElementById("courses").innerHTML += `
+                    <tr bgcolor="lightgray">
+                        <td>${course}</td>
+                    </tr>
+                `
+            }
 
-        // fill the courses from the database courses
-        function add_course(course){
-            // adds the course into the table
-            document.getElementById("courses").innerHTML += `
-                <tr bgcolor="lightgray">
-                    <td>${course}</td>
-                </tr>
-            `
-        }
-
-        fetch(`http://localhost:${PORT}/add_course/get`,{
-            method: 'POST',
-            headers: {
-                'Content-type': 'application/json'
-            },
-            body: JSON.stringify({
-                email: email
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            data.forEach(item => {
-                // insert added course into the table
-                add_course(item.course_id);
-            })
-        })
-
-        document.getElementById("add_course").addEventListener('click',async (event)=>{
-            const course = document.getElementById("add_course_input").value.trim();
-            if(course){
-                // request server to add the course info into the database courses
-                const response = await fetch(`http://localhost:${PORT}/add_course/insert`,{
-                    method: 'POST',
-                    headers: {
-                        'Content-type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        email: email,
-                        course: course
-                    })
+            fetch(`http://localhost:${PORT}/add_course/get`,{
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: email
                 })
-                const data = await response.text();
-                if(data == '0'){
-                    console.log('inserted into database');
-                    add_course(course);
+            })
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(item => {
+                    // insert added course into the table
+                    add_course(item.course_id);
+                })
+            })
+
+            document.getElementById("add_course").addEventListener('click',async (event)=>{
+                const course = document.getElementById("add_course_input").value.trim();
+                if(course){
+                    // request server to add the course info into the database courses
+                    const response = await fetch(`http://localhost:${PORT}/add_course/insert`,{
+                        method: 'POST',
+                        headers: {
+                            'Content-type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            email: email,
+                            course: course
+                        })
+                    })
+                    const data = await response.text();
+                    if(data == '0'){
+                        console.log('inserted into database');
+                        add_course(course);
+                    }
+                    else if(data == '1'){
+                        alert("this course can't be added multiple times")
+                    }
+                    else if(data == '2'){
+                        alert("this course was already teaching by some other instructor")
+                    }
                 }
-                else if(data == '1'){
-                    alert("this course can't be added multiple times")
+                else{
+                    alert('add course field is empty')
                 }
-                else if(data == '2'){
-                    alert("this course was already teaching by some other instructor")
-                }
-            }
-            else{
-                alert('add course field is empty')
-            }
+            })
         })
+        
     </script>
 </body>
 </html>

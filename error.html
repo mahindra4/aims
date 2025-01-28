@@ -3,9 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Error</title>
+    <link rel = "stylesheet" href="../assets/css/courses.css">
+    <link rel = "icon" href="../assets/images/iit-ropar-logo.webp">
 </head>
 <body>
-    <h1>Enter your credentials to Login</h1>
+    <h1>Please log in to access this page</h1>
+    <p>You are not logged in. Redirecting you to the login page.</p>
+    <script>
+        setTimeout(() => {
+            window.location = 'login.html'; // Redirect to login page after a delay
+        }, 3000); // Delay of 3 seconds before redirect
+    </script>
 </body>
 </html>

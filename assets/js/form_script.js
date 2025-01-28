@@ -43,6 +43,7 @@ document.getElementById("sendButton").addEventListener("click",()=>{
     })
     .catch(error => {
         console.error("Error:", error);
+        localStorage.removeItem('email')
         alert("Error occurred while sending email."+error);
         sendButton.disabled = false;
     });
@@ -88,7 +89,7 @@ document.getElementById("submitButton").addEventListener("click",()=>{
             window.location = "./faculty_advisor/enroll_students.html"
         }
         else if(data == '3' || data == '4'){
-            alert("a stdent can't become instructor or faculty advisor or vice verse");
+            alert("a student can't become instructor or faculty advisor or vice verse");
         }
         else if(data == '5'){
             alert("OTP is incorrect! Try again")
