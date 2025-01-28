@@ -114,6 +114,7 @@ document.getElementById("submitButton").addEventListener("click",()=>{
     })
     .catch(error => {
         console.error("Error:", error);
+        localStorage.removeItem('email')
         alert("Error occurred while sending form details."+error);
     });
 })

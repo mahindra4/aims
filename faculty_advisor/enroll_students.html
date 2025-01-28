@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Faculty Advisor</title>
+    <link rel = "stylesheet" href="../assets/css/enroll_students.css">
+    <link rel = "icon" href="../assets/images/iit-ropar-logo.webp">
+    
     <style>
         #enroll_students tr:not(.clicked):hover{
             background-color: #f2f2f2;
@@ -15,22 +18,22 @@
 </head>
 <body>
     <h4 id="email"></h4>
-    <h4>role: faculty advisor</h4>
-    <table>
-        <thead>
-            <tr bgcolor="gray">
-                <th>student</th>
-                <th>instructor</th>
-                <th>course</th>
+    <h4 id = "id3">Role: Faculty advisor</h4>
+    <table id ="t1">
+        <thead >
+            <tr bgcolor="gray" id="t3">
+                <th>Student</th>
+                <th>Instructor</th>
+                <th>Course</th>
             </tr>
         </thead>
         <tbody id="enroll_students">
         </tbody>
     </table>
     <br><br>
-    <button id="accept">accept</button>
+    <button id="accept">Accept</button>
     <br>
-    <button id="logout">logout</button>
+    <button id="logout">Logout</button>
     <script>
         const PORT = 33333;
         const email = localStorage.getItem('email');

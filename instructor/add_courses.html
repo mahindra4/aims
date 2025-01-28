@@ -3,40 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-
-    </style>
+    <title>Instructor</title>
+    <link rel = "stylesheet" href="../assets/css/add_courses.css">
+    <link rel = "icon" href="../assets/images/iit-ropar-logo.webp">
 </head>
 <body>
-    <div>
-        <a href="add_courses.html" id="add_courses_link">
-            add courses
-        </a>
-        <a href="student_requests.html" id="student_requests_link">
-            student requests
-        </a>
-    </div>
+    <header>
+        <div class="class1">
+        
+            <a href = "add_courses.html" id="add_courses_link">
+                <button id = "id1">
+                    Add Course
+                </button>
+            </a>
+
+            <a href = "student_requests.html" id="student_requests_link">
+                <button id = "id2">
+                    Student Requests
+                </button>
+            </a>  
+        </div>
+    </header>
+
     <h4 id="email"></h4>
-    <h4>role: instructor</h4>
-    <label for="add_course_input">add course</label>
-    <input type="text" id="add_course_input">
+    <h4 id="id3">Role: Instructor</h4>
+
+    <div>
+    <label for="add_course_input" style="font-size: large; ">Add Course : </label>
+    <input type="text" id="add_course_input" placeholder="CP301">
+    </div>
+    <br>
+
+    <button id="add_course" >Add course</button>
     <br>
     <br>
-    <button id="add_course">add course</button>
-    <br>
-    <br>
-    <table>
+
+    <table id = "t1">
         <thead>
-            <tr bgcolor="gray">
-                <th>course</th>
+            <tr bgcolor="gray" id="tr">
+                <th>Course</th>
             </tr>
         </thead>
         <tbody id="courses">
+          <!--<tr >
+                <td>Course</td>
+            </tr>
+            -->  
         </tbody>
     </table>
+
     <br>
-    <button id="logout">logout</button>
+    <button id="logout">Logout</button>
     <script>
         const PORT = 33333;
         

@@ -3,25 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Enrollments</title>
+    <link rel="stylesheet" href="../assets/css/enrollments.css"> 
+    <link rel="icon" href="../assets/images/iit-ropar-logo.webp">
 </head>
 <body>
-    <div>
-        <a href="course.html" id="course_link">
-            courses
-        </a>
-        <a href="enrollments.html" id="enrollments_link">
-            enrollements
-        </a>
-    </div>
+    <header>
+        <div class="class1">
+            <a href="course.html" id="course_link">
+                <button id="id1">
+                    Courses
+                </button>
+            </a>
+
+            <a href="enrollments.html" id="enrollments_link">
+                <button id="id2">
+                    Enrollments
+                </button>
+            </a>  
+        </div>
+    </header>
+
     <h4 id="email"></h4>
-    <h4>role: student</h4>
-    <table>
+    <h4 id="id3">Role: Student</h4>
+    <table id="t1">
         <thead>
-            <tr bgcolor="gray">
-                <th>instructor</th>
-                <th>course</th>
-                <th>status</th>
+            <tr bgcolor="gray" id="tr">
+                <th>Instructor</th>
+                <th>Course</th>
+                <th>Status</th>
             </tr>
         </thead>
         <tbody id="student-selected-courses">
@@ -29,7 +39,8 @@
         </tbody>
     </table>
     <br>
-    <button id="logout">logout</button>
+    <button id="logout">Logout</button>
+
     <script>
         const PORT = 33333
         const email = localStorage.getItem('email');

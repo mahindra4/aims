@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Instructor</title>
+    <link rel = "stylesheet" href="../assets/css/student_requests.css">
+    <link rel = "icon" href="../assets/images/iit-ropar-logo.webp">
     <style>
         tbody tr:not(.clicked):hover{
             background-color: #f2f2f2;
@@ -14,40 +16,64 @@
     </style>
 </head>
 <body>
-    <div>
-        <a href="add_courses.html">
-            add courses
-        </a>
-        <a href="student_requests.html">
-            student requests
-        </a>
-    </div>
+    <header>
+        <div class="class1">
+        
+            <a href = "add_courses.html" id="add_courses_link">
+                <button id = "id1">
+                    Add Course
+                </button>
+            </a>
+
+            <a href = "student_requests.html" id="student_requests_link">
+                <button id = "id2">
+                    Student Requests
+                </button>
+            </a>  
+        </div>
+    </header>
     <h4 id="email"></h4>
-    <h4>role: instructor</h4>
-    <table>
+    <h4 id = "id3">Role: Instructor</h4>
+
+    <table id = "t1">
         <thead>
-            <tr bgcolor="gray">
-                <th>email</th>
-                <th>course</th>
+            <tr bgcolor="gray" id = "tr">
+                <th>Email</th>
+                <th>Course</th>
             </tr>
+
         </thead>
         <tbody id="student-requests">
         </tbody>
     </table>
     <br>
-    <button id="accept">accept</button>
+    <button id="accept">Accept</button>
     <br>
-    <button id="logout">logout</button>
+    <button id="logout">Logout</button>
     <script>
         const PORT = 33333;
         
         let email = localStorage.getItem("email")
 
-        //
-        // email = 'a';
-        window.addEventListener('beforeunload',(event)=>{
-            // localStorage.clear()
+        
+        sessionStorage.removeItem('is_navigating')
+
+        document.getElementById('add_courses_link').addEventListener('click',(event)=>{
+            sessionStorage.setItem('is_navigating','true')
         })
+        document.getElementById('student_requests_link').addEventListener('click',(event)=>{
+            sessionStorage.setItem('is_navigating','true')
+        })
+
+        window.addEventListener('beforeunload',(event)=>{
+            const is_navigating = sessionStorage.getItem('is_navigating')
+            if(!is_navigating){
+                localStorage.removeItem('email')
+            }
+            // fetch(`http://localhost:${PORT}/tab_closed`)
+        })
+
+
         document.getElementById("logout").addEventListener('click',(event)=>{
             localStorage.removeItem('email')
             window.location = '../login.html'
