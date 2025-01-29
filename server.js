@@ -19,7 +19,27 @@ app.use(cors());
 app.use(express.json())
 // app.use(express.static('public'))
 
+// Set up session management
 
+app.use(session({
+
+    store: new pgSession({
+
+        pool: client, // Use your existing PostgreSQL client
+
+        tableName: 'user_sessions' // Table to store sessions
+
+    }),
+
+    secret: process.env.SESSION_SECRET, // Use a secret key from environment variables
+
+    resave: false,
+
+    saveUninitialized: false,
+
+    cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 } // 30 days
+
+}));
 async function handle_otp(email){
     return new Promise((resolve,reject)=>{
         let otp = '';
@@ -135,6 +155,44 @@ app.post("/submit",async (req,res)=>{
         res.status(500).send("Error occured");
     }
 })
+
+// Logout endpoint
+
+app.post('/logout', (req, res) => {
+
+    req.session.destroy((err) => {
+
+        if (err) {
+
+            return res.status(500).send('Could not log out.');
+
+        }
+
+        res.clearCookie('connect.sid'); // Clear the session cookie
+
+        res.send('Logged out successfully.');
+
+    });
+
+});
+
+
+// Check session on page load
+
+app.get('/check-session', (req, res) => {
+
+    if (req.session.user) {
+
+        res.sendStatus(200);
+
+    } else {
+
+        res.sendStatus(401);
+
+    }
+
+});
+
 
 app.get("/course_data",async (req,res)=>{
     const select_res = await client.query('select * from courses')
