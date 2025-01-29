@@ -6,21 +6,26 @@ body {
     height: 100vh;
     margin: 0;
     background-color: #f4f4f4;
+    background-image: url(../images/cool-background.png);
+    justify-content: flex-end;
 }
 
 body::before {
-    content: ""; /* Empty content to create the pseudo-element */
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
     background-image: url('../images/iit-ropar-logo.webp');
-    background-size: contain; /* Ensures the image fits within the viewport without cropping */
-    background-position: center;
-    background-repeat: no-repeat; /* Prevents the image from repeating */
-    opacity: 0.4; /* Adjust this value for desired opacity (0 is fully transparent, 1 is fully opaque) */
-    z-index: -1; /* Ensures the pseudo-element stays behind the content */
+    background-size: contain; 
+    background-position: left;
+    background-repeat: no-repeat; 
+    opacity: 0.4; 
+    z-index: -1; 
+    mix-blend-mode: multiply;
+    margin:100px;
+    
 }
 
 form {
@@ -33,6 +38,10 @@ form {
     display: flex;
     flex-direction: column;
     gap: 15px;
+    background-image: url(../images/cool-background.png);
+    background-size: contain;
+    margin:100px;
+    
 }
 
 .form-group {

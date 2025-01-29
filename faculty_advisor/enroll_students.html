@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Advisor</title>
+    <link rel = "stylesheet" href="../assets/css/enroll_students.css">
+    <link rel = "icon" href="../assets/images/iit-ropar-logo.webp">
+    
+    <style>
+        #enroll_students tr:not(.clicked):hover{
+            background-color: #f2f2f2;
+        }
+        .clicked{
+            background-color: #b3e0ff;
+        }
+    </style>
+
+</head>
+<body>
+    <h4 id="email"></h4>
+    <h4 id = "id3">Role: Faculty advisor</h4>
+    <table id ="t1">
+        <thead >
+            <tr bgcolor="gray" id="t3">
+                <th>Student</th>
+                <th>Instructor</th>
+                <th>Course</th>
+            </tr>
+        </thead>
+        <tbody id="enroll_students">
+         <!--  <tr >
+                <td>Nikhil</td>
+                <td>Doraemon</td>
+                <td>CS69</td>
+            </tr>
+            <tr>
+                <td>Akhil</td>
+                <td>Shizuka</td>
+                <td>CS96</td>
+            </tr>
+            -->
+        
+        </tbody>
+    </table>
+    <br><br>
+    <button id="accept">Accept</button>
+    <br>
+    <button id="logout">Logout</button>
+    <script>
+        const PORT = 33333;
+        const email = sessionStorage.getItem('email');
+        document.getElementById('email').innerHTML = 'user: '+email;
+        document.getElementById("logout").addEventListener('click',(event)=>{
+            window.location = '../login.html'
+        })
+        fetch(`http://localhost:${PORT}/faculty_advisor_approval`,{
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: email
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            tbody = document.getElementById('enroll_students');
+            data.forEach(item=>{
+                const element = `
+                    <tr bgcolor="lightgray">
+                        <td>${item.student_email}</td>
+                        <td>${item.instructor}</td>
+                        <td>${item.course}</td>
+                    <tr>
+                `
+                tbody.innerHTML+=element;
+            })
+            
+            // after all the data has been filled we need to add 'click' event listener
+            const rows = document.querySelectorAll('#enroll_students tr');
+            rows.forEach(row=>{
+                row.addEventListener('click',(event)=>{
+                    row.classList.toggle('clicked');
+                })
+            })
+        })
+        
+        document.getElementById('accept').addEventListener('click',async (event)=>{
+            const rows = document.querySelectorAll('#enroll_students tr');
+            selected_rows = []
+            rows.forEach(row=>{
+                if(row.classList.contains('clicked')){
+                    const items = row.querySelectorAll('td');
+                    const student_email = items[0].textContent;
+                    const course = items[2].textContent;
+                    selected_rows.push({
+                        student_email: student_email,
+                        course: course
+                    })
+                    row.remove();
+                }
+            })
+            // request the server to update the pfa to enrolled
+            const response = await fetch(`http://localhost:${PORT}/update_pfa`,{
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    selected_rows: selected_rows
+                })
+            })
+            const data = await response.text();
+            console.log(data);
+        })
+    </script>
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
+</body>
+</html>

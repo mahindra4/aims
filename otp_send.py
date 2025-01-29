@@ -3,6 +3,8 @@ import smtplib
 import os
 import sys
 import time
+from dotenv import load_dotenv
+load_dotenv()
 
 random.seed(time.time())
 
@@ -15,7 +17,7 @@ print(otp)
 server = smtplib.SMTP(host='smtp.gmail.com',port=587)
 server.starttls()
 
-from_mail = 'mahindragowdkatta@gmail.com'
+from_mail = os.getenv('FROM_EMAIL')
 server.login(user=from_mail,password=os.getenv('EMAIL_PASSWORD'))
 to_mail = sys.argv[1]
 msg = EmailMessage()

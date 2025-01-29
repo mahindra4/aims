@@ -45,7 +45,7 @@ async function handle_otp(email){
 let otp_store = {}; // {email: otp}
 app.post("/send",async (req,res)=>{
     try{
-        console.log(req.body)
+        // console.log(req.body)
         let email = req.body.email
         let otp = "000000"
         // otp = await handle_otp(email) // if resolve then gives the output here else there is an error
@@ -86,20 +86,20 @@ app.post("/submit",async (req,res)=>{
                 await client.query('insert into login(email,role) values($1,$2)',[email,role]) // insert into database
                 console.log('new user')
                 access_permitted = true;
-                res.send('0')           
+                // res.send('0')           
             }
             else if(select_res.rowCount == 1){
                 const a = dict[select_res.rows[0].role] // database role
                 const b = dict[role] // user current role
                 if(a == b){
-                    res.send('2'); // user should login with his database credentials
-                    console.log('same role')
+                    // res.send('2'); // user should login with his database credentials
+                    // console.log('same role')
                     access_permitted = true;
                 }
                 else if(a*b){
                     await client.query('insert into login values($1,$2)',[email,role]) 
                     console.log('instructor <-> faculty advisor')
-                    res.send('4');  // instructor <-> faculty advisor
+                    // res.send('4');  // instructor <-> faculty advisor
                     access_permitted = true;
                 }
                 else{
@@ -110,19 +110,17 @@ app.post("/submit",async (req,res)=>{
             else{
                 if(dict[role] == 0){
                     // only instructor and faculty advisor can be the same person
-                    res.send('5');
+                    res.send('4');
                 }
                 else{
                     // login with their credintials
-                    res.send('0');
+                    // res.send('0');
                     access_permitted = true;
                 }
             }
 
             if(access_permitted){
-                if(role){
-
-                }
+                res.send(String(dict[role])) // sending the encoding of the roles
                 delete otp_store[email] // when access is given to you then delete your email instance
             }
             const select = await client.query('select * from login');
@@ -130,7 +128,7 @@ app.post("/submit",async (req,res)=>{
         }
         else{
             console.log('ACCESS DENIED');
-            res.send('1') // 1 says that login credentials are wrong
+            res.send('5') // 5 says that login credentials are wrong
         }
     }catch(err){
         console.log("Error: "+err);
@@ -140,14 +138,99 @@ app.post("/submit",async (req,res)=>{
 
 app.get("/course_data",async (req,res)=>{
     const select_res = await client.query('select * from courses')
-    // console.log(select_res.rows);
     res.send(select_res.rows)
 })
 
-app.listen(process.env.PORT,()=>{
+app.post("/student_selected_courses/course",(req,res)=>{
+    const email = req.body.email;
+    const selected_rows = req.body.selected_rows
+    selected_rows.forEach(async row => {
+        const select_res = await client.query(`select * from student_selected_courses where student_email=$1 and instructor=$2 and course=$3`,[email,row.instructor,row.course]);
+        if(select_res.rowCount == 0){
+            await client.query(`insert into student_selected_courses values($1,$2,$3,'pia')`,[email,row.instructor,row.course])
+        }
+    })
+    res.send('insert into database')
+})
+
+app.post("/student_selected_courses/enrollments",async (req,res)=>{
+    const email = req.body.email;
+    const select_res = await client.query(`select instructor,course,status from student_selected_courses where student_email=$1`,[email]);
+    res.send(select_res.rows)
+})
+
+app.post("/student_requests",async (req,res)=>{
+    const email = req.body.email
+    const select_res = await client.query(`select student_email,course from student_selected_courses where instructor=$1 and status='pia'`,[email])
+    res.send(select_res.rows);
+})
+
+app.post("/student_requests/instructor_approved",(req,res)=>{
+    const email = req.body.email;
+    const selected_rows = req.body.selected_rows;
+    selected_rows.forEach(async row=>{
+        await client.query(`update student_selected_courses set status='pfa' where student_email=$1 and instructor=$2 and course=$3`,[row.email,email,row.course]);
+    })
+    res.send('updated the database')
+})
+
+app.post("/add_course/insert",async (req,res)=>{
+    const email = req.body.email;
+    const course = req.body.course;
+    const select_res = await client.query(`select * from courses where course_id=$1`,[course])
+    
+    console.log(req.body);
+    console.log(select_res.rows)
+    if(select_res.rowCount == 0){
+        await client.query(`insert into courses values($1,$2)`,[course,email]);
+        res.send('0')
+    }
+    else if(select_res.rows[0].instructor == email){
+        res.send('1');
+    }    
+    else{
+        res.send('2');
+    }
+})
+app.post("/add_course/get",async (req,res)=>{
+    const email = req.body.email;
+    const select_res = await client.query(`select course_id from courses where instructor=$1`,[email]);
+    res.send(select_res.rows);
+})
+
+app.post("/faculty_advisor_approval",async (req,res)=>{
+    const email = req.body.email;
+    const select_res = await client.query(`select student_email,instructor,course from student_selected_courses where status='pfa'`);
+    res.send(select_res.rows);
+})
+
+app.post("/update_pfa",(req,res)=>{
+    const selected_rows = req.body.selected_rows;
+    selected_rows.forEach(async row=>{
+        await client.query(`update student_selected_courses set status='enrolled' where student_email=$1 and course=$2`,[row.student_email,row.course]);
+    })
+    res.send('updated the database');
+})
+
+server = app.listen(process.env.PORT,()=>{
     console.log('Server running...')
 })
 
+process.on('SIGINT',()=>{
+    console.log('shutting down...');
+    server.close(()=>{
+        console.log('Server closed, Port released');
+        process.exit(0)
+    })
+})
+
+process.on('SIGTERM',()=>{
+    console.log('shutting down...');
+    server.close(()=>{
+        console.log('Server closed, Port released');
+        process.exit(0)
+    })
+})
 // app is listening of 12345 port (http://localhost:<port>)
 // when a post request is made to the server at (http://localhost:<port>) then first express.urlencoded() is invoked to parse the data (url combined data)
 // and it's passed to the post to handle the request at "/" and req.body contains the information and res can send the data back to the webpage

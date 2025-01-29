@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student</title>
+    <link rel = "stylesheet" href="../assets/css/courses.css">
+    <link rel = "icon" href="../assets/images/iit-ropar-logo.webp">
+</head>
+<body>
+
+    <header>
+        <div class="class1">
+        
+            <a href = "course.html">
+                <button id = "id1">
+                    Courses
+                </button>
+            </a>
+
+            <a href = "enrollments.html">
+                <button id = "id2">
+                    Enrollments
+                </button>
+            </a>  
+        </div>
+    </header>
+
+    <h4 id="email"></h4>
+    <h4 id="id3">Role: Student</h4>
+    <table id = "t1">
+        <thead >
+            <tr bgcolor="gray" id="tr">
+                <th>Instructor</th>
+                <th>Course</th>
+            </tr>
+        </thead>
+        <tbody id="instructor-course-table">
+           <!-- <tr >
+                <td>Nikhil</td>
+                <td>CS69</td>
+            </tr>
+            <tr>
+                <td>Akhil</td>
+                <td>CS65</td>
+            </tr>-->
+        </tbody>
+    </table>
+    <br>
+    <button id="enroll">Enroll</button>
+    <br>
+    <button id="logout">Logout</button>
+    <script>
+        const PORT = 33333
+        const email = sessionStorage.getItem('email')
+        document.getElementById("email").innerHTML = 'user: '+email;
+        // const selected_rows = []; // contains all the selected rows 
+        document.getElementById("logout").addEventListener('click',(event)=>{
+            window.location = '../login.html'
+        })
+        async function syncronize(){
+            try{
+                const response = await fetch(`http://localhost:${PORT}/course_data`);
+                const data = await response.json();
+                tbody = document.getElementById("instructor-course-table")
+                data.forEach(item => {
+                    element = `
+                        <tr bgcolor="lightgray">
+                            <td>${item.instructor}</td>
+                            <td>${item.course_id}</td>
+                        </tr>
+                    `
+                    tbody.innerHTML+=element;
+                })
+            }
+            catch(err){
+                console.log('Error: '+err);
+            }
+            const rows = document.querySelectorAll('#instructor-course-table tr');
+            rows.forEach(table_row => {
+                table_row.addEventListener('click',(event)=>{
+                    table_row.classList.toggle('clicked');
+                })  
+            })
+        }
+        syncronize();
+
+        document.getElementById("enroll").addEventListener('click',async (event)=>{
+            table_rows = document.querySelectorAll('#instructor-course-table tr');
+            selected_rows = [];
+            table_rows.forEach(table_row=>{
+                items = table_row.querySelectorAll('td');
+                instructor = items[0].textContent;
+                course = items[1].textContent;
+                if(table_row.classList.contains('clicked')){
+                    selected_rows.push({
+                        instructor: instructor,
+                        course: course
+                    })
+                    table_row.classList.toggle('clicked')
+                }
+            })
+            // selected_rows.forEach(item => console.log(item));
+
+            // ask server to store the selected courses in the database -> student_selected_courses
+            const response = await fetch(`http://localhost:${PORT}/student_selected_courses/course`,{
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: email,
+                    selected_rows: selected_rows
+                })
+            }) 
+            const data = await response.text()
+            console.log(data)
+        })
+    </script>
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
+</body>
+</html>
