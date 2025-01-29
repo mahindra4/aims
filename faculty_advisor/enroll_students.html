@@ -33,6 +33,8 @@
     <br><br>
     <button id="accept">Accept</button>
     <br>
+    <button id="reject">Reject</button>
+    <br>
     <button id="logout">Logout</button>
     <script>
 
@@ -108,6 +110,35 @@
                 })
                 // request the server to update the pfa to enrolled
                 const response = await fetch(`http://localhost:${PORT}/update_pfa`,{
+                    method: 'POST',
+                    headers: {
+                        'Content-type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        selected_rows: selected_rows
+                    })
+                })
+                const data = await response.text();
+                console.log(data);
+            })
+
+            document.getElementById('reject').addEventListener('click',async (event)=>{
+                const rows = document.querySelectorAll('#enroll_students tr');
+                selected_rows = []
+                rows.forEach(row=>{
+                    if(row.classList.contains('clicked')){
+                        const items = row.querySelectorAll('td');
+                        const student_email = items[0].textContent;
+                        const course = items[2].textContent;
+                        selected_rows.push({
+                            student_email: student_email,
+                            course: course
+                        })
+                        row.remove();
+                    }
+                })
+                // request the server to update the pfa to enrolled
+                const response = await fetch(`http://localhost:${PORT}/update_pfa_rejected`,{
                     method: 'POST',
                     headers: {
                         'Content-type': 'application/json'

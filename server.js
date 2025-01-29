@@ -174,6 +174,15 @@ app.post("/student_requests/instructor_approved",(req,res)=>{
     res.send('updated the database')
 })
 
+app.post("/student_requests/instructor_rejected",(req,res)=>{
+    const email = req.body.email;
+    const selected_rows = req.body.selected_rows;
+    selected_rows.forEach(async row=>{
+        await client.query(`update student_selected_courses set status='instructor rejected' where student_email=$1 and instructor=$2 and course=$3`,[row.email,email,row.course]);
+    })
+    res.send('updated the database')
+})
+
 app.post("/add_course/insert",async (req,res)=>{
     const email = req.body.email;
     const course = req.body.course;
@@ -208,6 +217,14 @@ app.post("/update_pfa",(req,res)=>{
     const selected_rows = req.body.selected_rows;
     selected_rows.forEach(async row=>{
         await client.query(`update student_selected_courses set status='enrolled' where student_email=$1 and course=$2`,[row.student_email,row.course]);
+    })
+    res.send('updated the database');
+})
+
+app.post("/update_pfa_rejected",(req,res)=>{
+    const selected_rows = req.body.selected_rows;
+    selected_rows.forEach(async row=>{
+        await client.query(`update student_selected_courses set status='rejected' where student_email=$1 and course=$2`,[row.student_email,row.course]);
     })
     res.send('updated the database');
 })

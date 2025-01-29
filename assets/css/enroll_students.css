@@ -85,7 +85,7 @@ tbody tr:not(.clicked):hover {
     background-color: #b3e0ff;
 }
 
-#accept, #logout {
+#accept, #logout , #reject{
     margin: 10px;
     padding: 10px 20px;
     font-size: large;

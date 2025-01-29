@@ -49,6 +49,8 @@
     <br>
     <button id="accept">Accept</button>
     <br>
+    <button id="reject">Reject</button>
+    <br>
     <button id="logout">Logout</button>
     <script>
 
@@ -132,6 +134,36 @@
                 })
                 // selected_rows.forEach(item => console.log(item))
                 const response = await fetch(`http://localhost:${PORT}/student_requests/instructor_approved`,{
+                    method: 'POST',
+                    headers: {
+                        'Content-type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        selected_rows: selected_rows
+                    })
+                }) 
+                const data = await response.text();
+                console.log(data);
+            })
+
+            document.getElementById('reject').addEventListener('click',async (event)=>{
+                const selected_rows = [];
+                document.querySelectorAll('#student-requests tr').forEach(row=>{
+                    if(row.classList.contains('clicked')){
+                        // selected elements
+                        const rows = row.querySelectorAll('td')
+                        const email = rows[0].textContent;
+                        const course = rows[1].textContent;
+                        selected_rows.push({
+                            email: email,
+                            course: course
+                        })
+                        row.remove()
+                    }
+                })
+                // selected_rows.forEach(item => console.log(item))
+                const response = await fetch(`http://localhost:${PORT}/student_requests/instructor_rejected`,{
                     method: 'POST',
                     headers: {
                         'Content-type': 'application/json'
